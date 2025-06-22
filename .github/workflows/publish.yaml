@@ -1,0 +1,66 @@
+name: Publish
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'package.json'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      versionChanged: "${{ steps.check.outputs.versionChanged }}"
+      version: "${{ steps.check.outputs.version }}"
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Check"
+        id: check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs")
+            const packageJson = JSON.parse(fs.readFileSync("package.json", 'utf-8'));
+            const localVersion = packageJson.version;
+            const registryJson = await fetch('https://registry.npmjs.org/@jesse-r-s-hines/7z-wasm/latest').then(r => r.json());
+            const registryVersion = registryJson.version;
+
+            core.setOutput('version', localVersion);
+            if (registryVersion == localVersion) {
+              core.setOutput('versionChanged', 'false');
+            } else {
+              core.setOutput('versionChanged', 'true');
+            }
+
+  build-and-publish:
+    if: ${{ success() && needs.check.outputs.versionChanged == 'true' }}
+    runs-on: ubuntu-latest
+    needs: check
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Build
+        run: |
+          npm ci
+          ./build
+          sudo chown $USER:$USER 7zz.es6.js 7zz.umd.js 7zz.wasm
+
+      - name: Release
+        run: |
+          gh release create "$VERSION" --title "$VERSION"
+        env:
+          VERSION: "${{ needs.check.outputs.version }}"
+          GH_TOKEN: "${{ github.token }}"
+
+      - name: Publish
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}"
