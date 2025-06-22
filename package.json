@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/use-strict/7z-wasm.git"
+    "url": "git+https://github.com/jesse-r-s-hines/7z-wasm.git"
   },
   "keywords": [
     "7-Zip",
@@ -28,12 +28,12 @@
     "bz2",
     "nsis"
   ],
-  "author": "Alexandru Ciuca",
+  "author": "jesse-r-s-hines",
   "license": "SEE LICENSE IN License.txt",
   "bugs": {
-    "url": "https://github.com/use-strict/7z-wasm/issues"
+    "url": "https://github.com/jesse-r-s-hines/7z-wasm/issues"
   },
-  "homepage": "https://github.com/use-strict/7z-wasm#README.md",
+  "homepage": "https://github.com/jesse-r-s-hines/7z-wasm#README.md",
   "engines": {
     "node": ">=8.0.0"
   },

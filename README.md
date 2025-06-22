@@ -1,5 +1,7 @@
 # 7-Zip WASM
 
+Fork of https://github.com/use-strict/7z-wasm with updated version of 7zip.
+
 7-Zip compiled to WASM with emscripten. Based on 7-Zip 24.09 (2024-11-29).
 
 - Runs in any JavaScript environment that supports WASM (Browser or NodeJS)
